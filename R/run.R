@@ -33,8 +33,8 @@ dir.create(path = Sys.getenv("R_LIBS_USER"),
 
 .libPaths(c(.libPaths(), Sys.getenv("R_LIBS_USER")))
 
-# set up R packages to be used ny stitch
-pacs <- c("knitr", "tinytex")
+# set up R packages to be used by stitch
+pacs <- c("knitr", "tinytex", "remotes")
 
 # install packages and dependencies if not installed
 if (length(setdiff(pacs, rownames(installed.packages()))) > 0) {
@@ -48,6 +48,11 @@ if (length(setdiff(pacs, rownames(installed.packages()))) > 0) {
                     lib = Sys.getenv("R_LIBS_USER"),
                     repos = repo)
    tinytex::install_tinytex()
+}
+
+# install emaiyii package if not installed
+if (length(setdiff(c("emaiyii"), rownames(installed.packages()))) > 0) {
+   remotes::install_github("datawookie/emaiyii", lib = Sys.getenv("R_LIBS_USER")) # nolint
 }
 
 args <- commandArgs(trailingOnly = TRUE)
