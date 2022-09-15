@@ -14,12 +14,16 @@ args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1) {
   stop("You must give a .R or .Rmd (R markdown) script to run!", call. = FALSE)
 }
+
 if (file.exists(args[1]) == FALSE) {
-   stop("The file you gave does not exist!", call. = FALSE)
+  stop("The file you gave does not exist! try to use full path as argument", call. = FALSE) #nolint
 }
 
+# change Working Directory to script folder
+setwd(dirname(args[1]))
+
 # check config
-inifile <- paste( sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(args[1]) ), ".ini", sep = "") # nolint
+inifile <- paste0( sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(args[1]) ), ".ini") # nolint
 
 if (file.exists(inifile) == FALSE) {
    stop("Ini file not found", call. = FALSE)
@@ -109,3 +113,5 @@ if (exists("SMTP")) {
    email <- email %>% attachment(result)
    SMTP(email, verbose = TRUE)
 }
+
+print(elapsed)
