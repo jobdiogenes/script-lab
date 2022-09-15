@@ -2,7 +2,7 @@
 
 # Author: Job Diogenes Ribeiro Borges
 # License: GPLv3
-# Version: 0.1
+# Version: 0.2
 # Repository: < github.com/jobdiogenes/scrip-lab/R >
 #
 # About this script: this script is a R script to run any R script
@@ -72,12 +72,9 @@ if (!exists("CRAN_REPO")) {
 
 # install packages and dependencies if not installed
 if (length(setdiff(pacs, rownames(installed.packages()))) > 0) {
-
-   if (exists("PACKAGES")) {      
-      install.packages(setdiff(pacs, rownames(installed.packages())),
+   install.packages(setdiff(pacs, rownames(installed.packages())),
                     lib = Sys.getenv("R_LIBS_USER"),
                     repos = CRAN_REPO)
-   }
    tinytex::install_tinytex()
 }
 
