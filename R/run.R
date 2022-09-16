@@ -26,18 +26,10 @@ setwd(dirname(args[1]))
 inifile <- paste0( sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(args[1]) ), ".ini") # nolint
 
 if (file.exists(inifile) == FALSE) {
-   stop("Ini file not found", call. = FALSE)
-}
-
-source(inifile)
-if (exists("MAIL_USER") && exists("MAIL_PASS") && exists("MAIL_HOST")
-   && exists("MAIL_PORT")) {
-   SMTP <- server(
-     host = MAIL_HOST,
-     port = MAIL_PORT,
-     username = Sys.getenv(MAIL_USER),
-     password = Sys.getenv(MAIL_PASS)
-   )
+   print("Warning Ini file not found!")
+   print("Running without send email or autoinstall packages")
+} else {
+   source(inifile)
 }
 
 # setup work directory
@@ -47,8 +39,8 @@ if (dir.exists("lib") == FALSE) {
 if (dir.exists("bin") == FALSE) {
    dir.create("bin")
 }
-if (dir.exists("data") == FALSE) {
-   dir.create("data")
+if (dir.exists("input") == FALSE) {
+   dir.create("input")
 }
 if (dir.exists("output") == FALSE) {
    dir.create("output")
@@ -65,7 +57,7 @@ dir.create(path = Sys.getenv("R_LIBS_USER"),
 .libPaths(c(.libPaths(), Sys.getenv("R_LIBS_USER")))
 
 # set up R packages to be used by stitch
-pacs <- c("knitr", "tinytex", "remotes")
+pacs <- c("knitr", "tinytex", "remotes", "emayili")
 
 if (exists("PROJ_PACKAGES")) {
    append(pacs, PROJ_PACKAGES)
@@ -102,7 +94,15 @@ to_pdf <- function(dest) {
 
 elapsed <- system.time({to_pdf(result)})
 
-if (exists("SMTP")) {
+if (exists("MAIL_USER") && exists("MAIL_PASS") && exists("MAIL_HOST")
+   && exists("MAIL_PORT")) {
+   require("emayili")
+   SMTP <- server(
+     host = MAIL_HOST,
+     port = MAIL_PORT,
+     username = Sys.getenv(MAIL_USER),
+     password = Sys.getenv(MAIL_PASS)
+   )
    email <- envelop(
       to = MAIL_USER,
       from = MAIL_USER,

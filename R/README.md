@@ -5,7 +5,7 @@
      - create a standard [Project Oriented Folder Structure](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/) with folders :
        - ___~/bin___    # folder used to put some executables that you could call from script
        - ___~/lib___    # required packages which are not system available will be installed in this folder
-       - ___~/data___   #  put all your input data in this folder, create your own subfolders as needed
+       - ___~/input__   #  put all your input data in this folder, create your own subfolders as needed
        - ___~/output___ # put all of yours resuls in this folder, create your own subfolders as needed
     - save the resulting output to a ___scriptname___**.pdf** 
     - could send the pdf results to a email # need setup a ___scriptname___**.ini** file with yours desired settings
