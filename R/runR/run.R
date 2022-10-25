@@ -16,14 +16,14 @@ if (length(args) < 1) {
 }
 
 if (file.exists(args[1]) == FALSE) {
-  stop("The file you gave does not exist! try to use full path as argument", call. = FALSE) #nolint
+  stop("File does not exist! try to use full path as argument", call. = FALSE) #nolint
 }
 
 # change Working Directory to script folder
 setwd(dirname(args[1]))
 
 # check config
-inifile <- paste0( sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(args[1]) ), ".ini") # nolint
+inifile <- paste0( sub(pattern = "(.*)\\..*$", replacement = "\\1", filename(args[1]) ), ".ini") # nolint
 
 if (file.exists(inifile) == FALSE) {
    print("Warning Ini file not found!")
@@ -57,7 +57,8 @@ dir.create(path = Sys.getenv("R_LIBS_USER"),
 .libPaths(c(.libPaths(), Sys.getenv("R_LIBS_USER")))
 
 # set up R packages to be used by stitch
-pacs <- c("knitr", "tinytex", "remotes", "emayili")
+# pacs <- c("knitr", "tinytex", "remotes", "emayili")
+pacs <- c("rmarkdown", "emayili")
 
 if (exists("PROJ_PACKAGES")) {
    append(pacs, PROJ_PACKAGES)
@@ -71,16 +72,15 @@ if (length(setdiff(pacs, rownames(installed.packages()))) > 0) {
    install.packages(setdiff(pacs, rownames(installed.packages())),
                     lib = Sys.getenv("R_LIBS_USER"),
                     repos = CRAN_REPO)
-   tinytex::install_tinytex()
 }
 
 # install emaiyii package if not installed
 if (length(setdiff(c("emaiyii"), rownames(installed.packages()))) > 0) {
    remotes::install_github("datawookie/emaiyii", lib = Sys.getenv("R_LIBS_USER")) # nolint
 }
-basename <- tools::file_path_san_ext(args[1])
+filename <- tools::file_path_san_ext(basename(args[1]))
 
-result <- paste0("output/", basename, format(Sys.time(), "%Y-%M-%d %X"), ".pdf")
+result <- paste0("output/", filename, format(Sys.time(), "%Y-%M-%d %X"), ".pdf")
 
 to_pdf <- function(dest) {
    knitr::stitch(args[1], output = dest,
