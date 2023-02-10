@@ -58,7 +58,7 @@ dir.create(path = Sys.getenv("R_LIBS_USER"),
 
 # set up R packages to be used by stitch
 # pacs <- c("knitr", "tinytex", "remotes", "emayili")
-pacs <- c("rmarkdown", "emayili")
+pacs <- c("rmarkdown", "generics", "emayili")
 
 if (exists("PROJ_PACKAGES")) {
    append(pacs, PROJ_PACKAGES)
@@ -74,12 +74,7 @@ if (length(setdiff(pacs, rownames(installed.packages()))) > 0) {
                     repos = CRAN_REPO)
 }
 
-# install emaiyii package if not installed
-if (length(setdiff(c("emaiyii"), rownames(installed.packages()))) > 0) {
-   remotes::install_github("datawookie/emaiyii", lib = Sys.getenv("R_LIBS_USER")) # nolint
-}
 filename <- tools::file_path_san_ext(basename(args[1]))
-
 result <- paste0("output/", filename, format(Sys.time(), "%Y-%M-%d %X"), ".pdf")
 
 to_pdf <- function(dest) {
@@ -96,14 +91,14 @@ elapsed <- system.time({to_pdf(result)})
 
 if (exists("MAIL_USER") && exists("MAIL_PASS") && exists("MAIL_HOST")
    && exists("MAIL_PORT")) {
-   require("emayili")
-   SMTP <- server(
+   
+   SMTP <- emayili::server(
      host = MAIL_HOST,
      port = MAIL_PORT,
-     username = Sys.getenv(MAIL_USER),
-     password = Sys.getenv(MAIL_PASS)
+     username = MAIL_USER),
+     password = MAIL_PASS) # could by safe use env vars here. if you did change to Sys.getenv(MAIL_PASS)
    )
-   email <- envelop(
+   email <- emayili::envelop(
       to = MAIL_USER,
       from = MAIL_USER,
       subject = paste("Your R script ", args[1],
